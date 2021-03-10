@@ -8,7 +8,7 @@ from frappe.model.document import Document
 from subprocess import Popen, PIPE, STDOUT
 import re, shlex
 
-def run_command(commands, doctype, key, cwd='..', docname=' ', after_command=None):
+def run_command(commands, doctype, key, cwd='..', docname=' ',site=None, domain=None,after_command=None):
 	verify_whitelisted_call()
 	start_time = frappe.utils.time.time()
 	console_dump = ""
@@ -19,21 +19,29 @@ def run_command(commands, doctype, key, cwd='..', docname=' ', after_command=Non
 		logged_command = re.sub("{password} .*? ".format(password=password), '', logged_command, flags=re.DOTALL)
 	doc = frappe.get_doc({'doctype': 'Bench Manager Command', 'key': key, 'source': doctype+': '+docname,
 		'command': logged_command, 'console': console_dump, 'status': 'Ongoing'})
-	doc.insert()
+	if site:
+		doc.site = site
+	if domain:
+		doc.domain = domain
+	doc.insert(ignore_permissions=True)
 	frappe.db.commit()
-	frappe.publish_realtime(key, "Executing Command:\n{logged_command}\n\n".format(logged_command=logged_command), user=frappe.session.user)
+	frappe.publish_realtime(key, "Executing Command:\n{logged_command}\n\n".format(logged_command=logged_command), user="Administrator")
 	try:
 		for command in commands:
 			terminal = Popen(shlex.split(command), stdin=PIPE, stdout=PIPE, stderr=STDOUT, cwd=cwd)
 			for c in iter(lambda: safe_decode(terminal.stdout.read(1)), ''):
-				frappe.publish_realtime(key, c, user=frappe.session.user)
+				frappe.publish_realtime(key, c, user="Administrator")
 				console_dump += c
 		if terminal.wait():
-			_close_the_doc(start_time, key, console_dump, status='Failed', user=frappe.session.user)
+			# doc.status = 'Failed'
+			# doc.time_taken = start_time
+			_close_the_doc(start_time, key, console_dump, status='Failed', user="Administrator")
 		else:
-			_close_the_doc(start_time, key, console_dump, status='Success', user=frappe.session.user)
+			# doc.status = 'Success'
+			# doc.time_taken = start_time
+			_close_the_doc(start_time, key, console_dump, status='Success', user="Administrator")
 	except Exception as e:
-		_close_the_doc(start_time, key, "{} \n\n{}".format(e, console_dump), status='Failed', user=frappe.session.user)
+		_close_the_doc(start_time, key, "{} \n\n{}".format(e, console_dump), status='Failed', user="Administrator")
 	finally:
 		frappe.db.commit()
 		# hack: frappe.db.commit() to make sure the log created is robust,
@@ -48,6 +56,7 @@ def _close_the_doc(start_time, key, console_dump, status, user):
 	for i in console_dump:
 		i = i.split('\r')
 		final_console_dump += '\n'+i[-1]
+	# frappe.db.sql('''update `tabBench Manager Command` set status=%s where key=%s''',(status,key))
 	frappe.set_value('Bench Manager Command', key, 'console', final_console_dump)
 	frappe.set_value('Bench Manager Command', key, 'status', status)
 	frappe.set_value('Bench Manager Command', key, 'time_taken', time_taken)

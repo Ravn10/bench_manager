@@ -1,0 +1,29 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "creation": "2021-03-10 15:08:52.434977",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Site",
+ "enabled": 1,
+ "event": "New",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "You ERP is ready to be used\n<h3>Order Overdue</h3>\n\n<p>Transaction {{ doc.name }} has exceeded Due Date. Please take necessary action.</p>\n\n<!-- show last comment -->\n{% if comments %}\nLast comment: {{ comments[-1].comment }} by {{ comments[-1].by }}\n{% endif %}\n\n<h4>Details</h4>\n\n<ul>\n<li>Customer: {{ doc.customer }}\n<li>Amount: {{ doc.grand_total }}\n</ul>",
+ "modified": "2021-03-10 15:20:22.715956",
+ "modified_by": "Administrator",
+ "module": "Bench Manager",
+ "name": "Site Creation Email",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "owner"
+  }
+ ],
+ "send_system_notification": 1,
+ "send_to_all_assignees": 0,
+ "sender": "Gmail",
+ "sender_email": "basant.mahar9819@gmail.com",
+ "subject": "Welcome to ERP"
+}

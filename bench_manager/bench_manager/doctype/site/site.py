@@ -203,7 +203,8 @@ def verify_password(site_name, mysql_password):
 	return "console"
 
 @frappe.whitelist()
-def create_site(site_name, install_erpnext, mysql_password, admin_password, key):
+def create_site(site_name, install_erpnext, mysql_password, admin_password, key, domain):
+	from bench_manager.bench_manager.doctype.bench_settings.bench_settings import sync_all
 	verify_whitelisted_call()
 	commands = ["bench new-site --mariadb-root-password {mysql_password} --admin-password {admin_password} {site_name}".format(site_name=site_name,
 		admin_password=admin_password, mysql_password=mysql_password)]
@@ -216,13 +217,20 @@ def create_site(site_name, install_erpnext, mysql_password, admin_password, key)
 	frappe.enqueue('bench_manager.bench_manager.utils.run_command',
 		commands=commands,
 		doctype="Bench Settings",
-		key=key
+		key=key,
+		site=site_name,
+		domain=domain
 	)
 	all_sites = safe_decode(check_output("ls")).strip('\n').split('\n')
 	while site_name not in all_sites:
 		time.sleep(2)
 		print("waiting for site creation...")
 		all_sites = safe_decode(check_output("ls")).strip('\n').split('\n')
-	doc = frappe.get_doc({'doctype': 'Site', 'site_name': site_name, 'app_list':'frappe', 'developer_flag':1})
-	doc.insert()
+	# sync_all()
+
 	frappe.db.commit()
+
+def create_site_entry(doc,method=None):
+	if doc.status =="Success" and doc.site:
+		site_doc = frappe.get_doc({'doctype': 'Site', 'site_name': doc.site, 'domain':doc.domain,'app_list':'frappe', 'developer_flag':1})
+		site_doc.insert(ignore_permissions=True)

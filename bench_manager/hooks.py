@@ -79,13 +79,11 @@ app_include_js = "/assets/bench_manager/js/bench_manager.js"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Bench Manager Command": {
+		"on_update": "bench_manager.bench_manager.doctype.site.site.create_site_entry",
+	}
+}
 
 # Scheduled Tasks
 # ---------------
