@@ -214,6 +214,7 @@ def create_site(site_name, install_erpnext, mysql_password, admin_password, key,
 		if 'erpnext' not in app_list:
 			commands.append("bench get-app erpnext")
 		commands.append("bench --site {site_name} install-app erpnext".format(site_name=site_name))
+		commands.append("bench --site {site_name} install-app erpnext_quota".format(site_name=site_name))
 	frappe.enqueue('bench_manager.bench_manager.utils.run_command',
 		commands=commands,
 		doctype="Bench Settings",

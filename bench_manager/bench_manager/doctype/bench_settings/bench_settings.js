@@ -47,6 +47,7 @@ frappe.ui.form.on('Bench Settings', {
 				callback: function(r){
 					var dialog = new frappe.ui.Dialog({
 						fields: [
+							{fieldname: 'domain', fieldtype: 'Data', label: "Domain Name", reqd: true},
 							{fieldname: 'site_name', fieldtype: 'Data', label: "Site Name", reqd: true},
 							{fieldname: 'install_erpnext', fieldtype: 'Check', label: "Install ERPNext"},
 							{fieldname: 'admin_password', fieldtype: 'Password',
@@ -82,7 +83,8 @@ frappe.ui.form.on('Bench Settings', {
 											admin_password: dialog.fields_dict.admin_password.value,
 											mysql_password: dialog.fields_dict.mysql_password.value,
 											install_erpnext: install_erpnext,
-											key: key
+											key: key,
+											domain:domain
 										}
 									});
 									dialog.hide();
