@@ -84,7 +84,7 @@ frappe.ui.form.on('Bench Settings', {
 											mysql_password: dialog.fields_dict.mysql_password.value,
 											install_erpnext: install_erpnext,
 											key: key,
-											domain:domain
+											domain: dialog.fields_dict.domain.value
 										}
 									});
 									dialog.hide();
