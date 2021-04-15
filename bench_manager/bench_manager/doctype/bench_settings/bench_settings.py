@@ -57,7 +57,7 @@ class BenchSettings(Document):
 		)
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def sync_sites():
 	verify_whitelisted_call()
 	site_dirs = update_site_list()
@@ -71,6 +71,10 @@ def sync_sites():
 		frappe.db.commit()
 
 	for site in delete_sites:
+		if frappe.db.exists('Quota Setting', site):
+			quota_setting_doc = frappe.get_doc('Quota Setting', site)
+			quota_setting_doc.delete()
+			frappe.db.commit()
 		doc = frappe.get_doc('Site', site)
 		doc.developer_flag = 1
 		doc.save()

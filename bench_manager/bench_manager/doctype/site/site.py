@@ -8,6 +8,9 @@ from frappe.model.document import Document
 from subprocess import check_output, Popen, PIPE
 import os, re, json, time, pymysql, shlex
 from bench_manager.bench_manager.utils import verify_whitelisted_call, safe_decode
+import subprocess
+from frappe.email import sendmail_to_system_managers
+from frappe import _
 
 class Site(Document):
 	site_config_fields = ["maintenance_mode", "pause_scheduler", "db_name", "db_password",
@@ -134,7 +137,7 @@ class Site(Document):
 			"uninstall_app": ["bench --site {site_name} uninstall-app {app_name} --yes".format(site_name=self.name, app_name=app_name)],
 			"drop_site": ["bench drop-site {site_name} --root-password {mysql_password}".format(site_name=self.name, mysql_password=mysql_password)]
 		}
-		frappe.enqueue('bench_manager.bench_manager.utils.run_command',
+		frappe.enqueue('bench_manager.bench_manager.custom_utils.run_command',
 			commands=commands[caller],
 			doctype=self.doctype,
 			key=key,
@@ -208,14 +211,16 @@ def create_site(site_name, install_erpnext, mysql_password, admin_password, key,
 	verify_whitelisted_call()
 	commands = ["bench new-site --mariadb-root-password {mysql_password} --admin-password {admin_password} {site_name}".format(site_name=site_name,
 		admin_password=admin_password, mysql_password=mysql_password)]
-	if install_erpnext == "true":
-		with open('apps.txt', 'r') as f:
-			app_list = f.read()
-		if 'erpnext' not in app_list:
-			commands.append("bench get-app erpnext")
-		commands.append("bench --site {site_name} install-app erpnext".format(site_name=site_name))
-		commands.append("bench --site {site_name} install-app erpnext_quota".format(site_name=site_name))
-	frappe.enqueue('bench_manager.bench_manager.utils.run_command',
+	custom_domain = domain+'.'+frappe.db.get_single_value("SAAS Settings","saas_domain")
+	# if install_erpnext:
+	# 	with open('apps.txt', 'r') as f:
+	# 		app_list = f.read()
+	# 	if 'erpnext' not in app_list:
+	# 		commands.append("bench get-app erpnext")
+	# 	commands.append("bench --site {site_name} install-app erpnext".format(site_name=site_name))
+	# 	commands.append("bench --site {site_name} install-app erpnext_quota".format(site_name=site_name))
+	commands.append("bench setup add-domain {custom_domain} --site {site_name}".format(custom_domain=custom_domain,site_name=site_name))
+	frappe.enqueue('bench_manager.bench_manager.custom_utils.run_command',
 		commands=commands,
 		doctype="Bench Settings",
 		key=key,
@@ -230,8 +235,74 @@ def create_site(site_name, install_erpnext, mysql_password, admin_password, key,
 	# sync_all()
 
 	frappe.db.commit()
+	# subprocess.call("sudo service nginx reload", shell=True)
+	# subprocess.call(["sudo bench setup nginx"],  input="y",shell=True)
 
+
+@frappe.whitelist(allow_guest=True)
 def create_site_entry(doc,method=None):
+	from bench_manager.bench_manager.custom_utils import setup_nginx_conf
 	if doc.status =="Success" and doc.site:
-		site_doc = frappe.get_doc({'doctype': 'Site', 'site_name': doc.site, 'domain':doc.domain,'app_list':'frappe', 'developer_flag':1})
-		site_doc.insert(ignore_permissions=True)
+		customer_ = frappe.db.get_all("Customer",filters={"owner":doc.owner},fields=['name'])
+		custom_domain =  doc.site+'.'+frappe.db.get_single_value("SAAS Settings","saas_domain")
+		if frappe.db.exists("Site",doc.site):
+			msg = _("Site {0} Already exists").format(site_doc.name)
+			frappe.log_error(message=msg, title="Site Exist")
+		else:
+			site_doc = frappe.get_doc(
+									{
+										'doctype': 'Site', 
+										'site_name': doc.site, 
+										'domain':custom_domain,
+										'app_list':'frappe', 
+										'developer_flag':1									
+										})
+			if customer_:
+				site_doc.update({'customer':customer_[0].name})
+				email_id_ = frappe.db.get_all("Contact",filters={"user":frappe.session.user},fields=['email_id'])
+				if email_id_:
+					site_doc.update({'customer_email':email_id_[0].email_id})
+			try:
+				site_doc.insert(ignore_permissions=True)
+			except:
+				title = _("Error creating site {0}").format(site_doc.name)
+				traceback = frappe.get_traceback()
+				frappe.log_error(message=traceback , title=title)
+				sendmail_to_system_managers(title, traceback)
+			frappe.db.commit()
+			setup_nginx_conf()
+
+@frappe.whitelist(allow_guest=True)
+def create_site_quota_setting(doc,method=None):
+	quota_setting_doc = frappe.new_doc("Quota Setting")
+	quota_setting_doc.site = doc.site_name
+	try:
+		quota_setting_doc.insert(ignore_permissions=True)
+		frappe.db.commit()
+	except:
+		frappe.db.rollback()
+		title = _("Error Creating Quota Setting for Site {0}").format(doc.site)
+		traceback = frappe.get_traceback()
+		frappe.log_error(message=traceback , title=title)
+		sendmail_to_system_managers(title, traceback)
+
+def update_customer_in_site(doc,method=None):
+	frappe.msgprint("customer in site updated")
+	# doc.customer = 	frappe.db.get_all("Customer",filters={"owner":doc.owner},fields=['name'])[0].name
+	# site_doc.save()
+	# frappe.db.commit()
+
+def update_customer_email(doc,method=None):
+    contacts = frappe.get_all('Contact',filters=[
+                                    ['Dynamic Link','link_doctype','=','Customer'],
+                                    ["Dynamic Link", "link_name", "=",doc.name],
+                                    ["Dynamic Link", "parenttype", "=", "Contact"]
+                                    ],
+                            fields=["name",'email_id','mobile_no']
+                    )
+    if contacts:
+        contact = contacts[0]
+        doc.customer_primary_contact = contact.name
+        doc.mobile_no = contact.mobile_no
+        doc.email_id = contact.email_id
+        doc.save()

@@ -82,6 +82,19 @@ app_include_js = "/assets/bench_manager/js/bench_manager.js"
 doc_events = {
 	"Bench Manager Command": {
 		"on_update": "bench_manager.bench_manager.doctype.site.site.create_site_entry",
+	},
+	"Bench Manager Cmd": {
+		"on_update": "bench_manager.bench_manager.doctype.site.site.create_site_entry",
+	},
+	"Site":{
+		"after_insert":["bench_manager.bench_manager.doctype.site.site.update_customer_in_site",
+						"bench_manager.bench_manager.doctype.site.site.create_site_quota_setting"]
+	},
+	"Customer":{
+		"after_insert":"bench_manager.bench_manager.doctype.site.site.update_customer_email"
+	},
+	"Sales Invoice":{
+		"on_submit":"bench_manager.bench_manager.doctype.site_quota_update.site_quota_update.create_site_quota_update"
 	}
 }
 

@@ -1,7 +1,7 @@
 {
  "attach_print": 0,
  "channel": "Email",
- "creation": "2021-03-10 15:21:30.456428",
+ "creation": "2021-04-13 11:51:06.694754",
  "days_in_advance": 0,
  "docstatus": 0,
  "doctype": "Notification",
@@ -10,11 +10,11 @@
  "event": "New",
  "idx": 0,
  "is_standard": 1,
- "message": "You ERP is ready to be used\nPlease login using following link {{doc.domain}}",
- "modified": "2021-04-12 15:08:07.464736",
+ "message": "You ERP is ready to be used\nPlease login using following link {{doc.domain}}\nDefault login Credentials \nUser:- Administrator\nPwd:- Smile@123\nPlease change this password on first login",
+ "modified": "2021-04-13 11:51:06.694754",
  "modified_by": "Administrator",
  "module": "Bench Manager",
- "name": "Welcome to ERP",
+ "name": "Site Creation",
  "owner": "Administrator",
  "recipients": [
   {

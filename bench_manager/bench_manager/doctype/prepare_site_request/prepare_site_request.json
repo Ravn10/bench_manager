@@ -1,0 +1,110 @@
+{
+ "autoname": "naming_series:",
+ "creation": "2021-04-14 16:23:41.487868",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "site",
+  "domain",
+  "customer",
+  "country",
+  "user",
+  "no_of_users",
+  "source",
+  "response",
+  "company",
+  "subdomain"
+ ],
+ "fields": [
+  {
+   "fieldname": "site",
+   "fieldtype": "Data",
+   "label": "Site"
+  },
+  {
+   "fieldname": "domain",
+   "fieldtype": "Data",
+   "label": "Domain"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Data",
+   "label": "Customer"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Data",
+   "label": "User"
+  },
+  {
+   "fieldname": "no_of_users",
+   "fieldtype": "Int",
+   "label": "No of Users"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Data",
+   "label": "Source"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "PSR-.######"
+  },
+  {
+   "fieldname": "response",
+   "fieldtype": "Small Text",
+   "label": "Response"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "label": "Company"
+  },
+  {
+   "fieldname": "subdomain",
+   "fieldtype": "Data",
+   "label": "Subdomain"
+  }
+ ],
+ "modified": "2021-04-14 16:35:38.512525",
+ "modified_by": "Administrator",
+ "module": "Bench Manager",
+ "name": "Prepare Site Request",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "report": 1,
+   "role": "Customer",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

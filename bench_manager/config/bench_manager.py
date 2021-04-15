@@ -33,10 +33,28 @@ def get_data():
 				"description": _("Site Backup")
 			},
 			{
-				"name": "Bench Manager Command",
+				"name": "Prepare Site Request",
 				"type": "doctype",
-				"label": _("Bench Manager Command"),
-				"description": _("Bench Manager Command")
+				"label": _("Prepare Site Request"),
+				"description": _("Prepare Site Request")
+			},
+			{
+				"name": "Quota Setting",
+				"type": "doctype",
+				"label": _("Quota Setting"),
+				"description": _("Quota Setting")
+			},
+			{
+				"name": "Site Quota Update",
+				"type": "doctype",
+				"label": _("Site Quota Update"),
+				"description": _("Site Quota Update")
+			},
+			{
+				"name": "Bench Manager Cmd",
+				"type": "doctype",
+				"label": _("Bench Manager Cmd"),
+				"description": _("Bench Manager Cmd")
 			},
 			{
 				"name": "Bench Settings",

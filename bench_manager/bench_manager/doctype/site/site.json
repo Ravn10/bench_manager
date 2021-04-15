@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "field:site_name",
  "creation": "2017-08-03 14:45:11.981784",
  "doctype": "DocType",
@@ -35,7 +34,9 @@
   "files_size",
   "total",
   "developer_flag",
-  "bench_settings"
+  "bench_settings",
+  "customer",
+  "customer_email"
  ],
  "fields": [
   {
@@ -203,7 +204,6 @@
   {
    "fieldname": "bench_settings",
    "fieldtype": "Data",
-   "hidden": 1,
    "label": "Bench Settings",
    "read_only": 1
   },
@@ -211,10 +211,21 @@
    "fieldname": "domain",
    "fieldtype": "Data",
    "label": "Domain"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "customer_email",
+   "fieldtype": "Data",
+   "label": "Customer Email",
+   "options": "Email"
   }
  ],
- "links": [],
- "modified": "2021-03-10 15:24:57.658288",
+ "modified": "2021-04-13 11:01:41.937189",
  "modified_by": "Administrator",
  "module": "Bench Manager",
  "name": "Site",
@@ -240,6 +251,16 @@
    "read": 1,
    "report": 1,
    "role": "All",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "report": 1,
+   "role": "Customer",
    "share": 1,
    "write": 1
   }

@@ -1,0 +1,83 @@
+{
+ "autoname": "field:site",
+ "creation": "2021-04-03 12:08:02.912001",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "users",
+  "space",
+  "db_space",
+  "company",
+  "valid_till",
+  "site",
+  "column_break_7",
+  "site_usage"
+ ],
+ "fields": [
+  {
+   "fieldname": "users",
+   "fieldtype": "Int",
+   "label": "Users"
+  },
+  {
+   "fieldname": "space",
+   "fieldtype": "Int",
+   "label": "Space"
+  },
+  {
+   "fieldname": "db_space",
+   "fieldtype": "Int",
+   "label": "DB Space"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Int",
+   "label": "Company"
+  },
+  {
+   "fieldname": "valid_till",
+   "fieldtype": "Date",
+   "label": "Valid Till"
+  },
+  {
+   "fieldname": "site",
+   "fieldtype": "Link",
+   "label": "Site",
+   "options": "Site",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "site_usage",
+   "fieldtype": "Code",
+   "label": "Site Usage"
+  }
+ ],
+ "modified": "2021-04-13 15:50:45.250620",
+ "modified_by": "Administrator",
+ "module": "Bench Manager",
+ "name": "Quota Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
