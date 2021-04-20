@@ -281,7 +281,7 @@ def create_site_quota_setting(doc,method=None):
 		frappe.db.commit()
 	except:
 		frappe.db.rollback()
-		title = _("Error Creating Quota Setting for Site {0}").format(doc.site)
+		title = _("Error Creating Quota Setting for Site {0}").format(doc.site_name)
 		traceback = frappe.get_traceback()
 		frappe.log_error(message=traceback , title=title)
 		sendmail_to_system_managers(title, traceback)
