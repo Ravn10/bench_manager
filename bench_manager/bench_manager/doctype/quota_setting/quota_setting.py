@@ -25,7 +25,7 @@ class QuotaSetting(Document):
 			# frappe.set_value(self.doctype,self.name,"site_usage",parsed)
 			frappe.db.commit()
 		else:
-			frappe.throw(_('quota.json does not exist for site {}').format(self.site))
+			frappe.log_error(_('quota.json does not exist for site {}').format(self.site),"Quota Setting Creation Error")
 	
 	def onload(self):
 		self.populate_quota()	
